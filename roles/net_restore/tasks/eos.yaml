@@ -1,0 +1,4 @@
+- name: Restore EOS config
+  eos_config:
+    replace: config
+    src: "backup/{{inventory_hostname}}.config"

@@ -1,0 +1,9 @@
+- name: Backup EOS Config
+  eos_config:
+    backup: yes
+  register: config_output
+
+- name: Move backup
+  copy:
+    src: "{{config_output.backup_path}}"
+    dest: "backup/{{inventory_hostname}}.config"

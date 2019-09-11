@@ -1,0 +1,6 @@
+- name: Backup JunOS Config
+  junos_config:
+    backup: yes
+    backup_options:
+      filename: "{{ inventory_hostname }}.config"
+      dir_path: "backup"

@@ -1,0 +1,4 @@
+- name: Restore JunOS config
+  junos_config:
+    update: replace
+    src: "backup/{{inventory_hostname}}.config"

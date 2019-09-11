@@ -1,0 +1,11 @@
+
+# This task will backup the configuration
+- name: Copy backup file to device
+  net_put:
+    src: "backup/{{inventory_hostname}}.config"
+    dest: "flash:{{inventory_hostname}}.config"
+
+- name: CONFIG REPLACE
+  ios_command:
+    commands:
+      - config replace flash:{{inventory_hostname}}.config force

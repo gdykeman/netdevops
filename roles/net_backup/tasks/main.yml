@@ -1,0 +1,9 @@
+---
+# tasks file for net_backup
+- name: Backup network device config(s)
+  include_tasks: "{{ ansible_network_os }}.yaml"
+
+- name: Clean up backup dir
+  file:
+    name: "{{ role_path }}/backup"
+    state: absent

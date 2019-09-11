@@ -1,0 +1,4 @@
+---
+# tasks file for net_backup
+- name: Restore network device config(s)
+  include_tasks: "{{ ansible_network_os }}.yaml"

@@ -1,0 +1,14 @@
+---
+- name: Backup Router Configurations
+  hosts: routers
+  gather_facts: no
+
+  tasks:
+    - name: Ensure backup folder exists
+      file:
+        name: backup
+        state: directory
+
+    - name: Backup configuration
+      include_role:
+        name: net_backup

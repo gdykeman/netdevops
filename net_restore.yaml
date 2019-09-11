@@ -1,0 +1,9 @@
+---
+- name: Restore Router Configurations
+  hosts: routers
+  gather_facts: no
+
+  tasks:
+    - name: Backup configuration
+      include_role:
+        name: net_restore
