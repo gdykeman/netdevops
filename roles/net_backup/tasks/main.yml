@@ -7,3 +7,4 @@
   file:
     name: "{{ role_path }}/backup"
     state: absent
+  run_once: true

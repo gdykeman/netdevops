@@ -1,0 +1,16 @@
+---
+- name: Set hostname and domain name
+  ios_system:
+    hostname: "{{ inventory_hostname }}-ansible"
+    domain_name: "{{ domain_name }}"
+    domain_search: "{{ domain_search }}"
+
+- name: Configure name servers
+  ios_system:
+    name_servers: "{{ name_servers }}"
+
+- name: Set login banner
+  ios_banner:
+    banner: login
+    text: "{{ net_banner }}"
+    state: present

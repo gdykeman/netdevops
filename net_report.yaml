@@ -1,0 +1,72 @@
+---
+- name: Gather information as structured data
+  hosts: routers
+  gather_facts: no
+
+  tasks:
+    - name: Ensure reports folder exists
+      run_once: true
+      file:
+        name: "{{playbook_dir}}/reports"
+        state: directory
+
+    - name: Load net data role
+      include_role:
+        name: net_data
+    
+    - debug:
+        var: hostvars[inventory_hostname]['ansible_net_hostname']
+
+    - name: Build report
+      include_role:
+        name: net_report
+
+- name: Setup AWS S3 report
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  become: no
+
+  vars:
+    webpage_name: "os-report"
+    ec2_region: us-east-1
+    ec2_az: us-east-1a
+    dns_zone: "redhatgov.io"
+    s3_state: present
+
+  tasks:
+    - name: Ensure s3 bucket exists
+      s3_bucket:
+        name: "{{webpage_name|lower}}.{{dns_zone|lower}}"
+        state: "{{ s3_state }}"
+        region: "{{ec2_region}}"
+        force: yes
+
+    - name: Ensure web hosting is enabled
+      s3_website:
+       name: "{{webpage_name|lower}}.{{dns_zone|lower}}"
+       state: "{{ s3_state }}"
+       region: "{{ec2_region}}"
+      register: s3_site
+      when: s3_state == 'present'
+
+    - name: Configure DNS for webpage
+      route53:
+        state: "{{ s3_state }}"
+        zone: "{{dns_zone}}"
+        record: "{{webpage_name|lower}}.{{dns_zone}}"
+        type: CNAME
+        overwrite: yes
+        value: "{{webpage_name|lower}}.{{dns_zone}}.s3-website-{{ec2_region}}.amazonaws.com"
+
+    - name: Put report
+      s3_sync:
+        bucket: "{{webpage_name|lower}}.{{dns_zone}}"
+        region: "{{ec2_region}}"
+        file_root: "{{ playbook_dir }}/reports/"
+        mime_map:
+          .html: text/html
+        permission: public-read
+        file_change_strategy: checksum
+        include: "*"
+      when: s3_state == 'present'

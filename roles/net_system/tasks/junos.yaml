@@ -1,0 +1,15 @@
+- name: Set hostname and domain name
+  junos_system:
+    hostname: vSRX_01
+    domain_name: "{{ domain_name }}"
+    domain_search: "{{ domain_search }}"
+
+- name: Configure name servers
+  junos_system:
+    name_servers: "{{ name_servers }}"
+
+- name: Set banner
+  junos_banner:
+    banner: login
+    text: "{{ net_banner }}"
+    state: present
