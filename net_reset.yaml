@@ -1,0 +1,8 @@
+---
+- name: System level configurations for routers
+  hosts: routers
+  gather_facts: false
+
+  tasks:
+    - include_role:
+        name: net_reset
